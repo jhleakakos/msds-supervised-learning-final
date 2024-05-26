@@ -2,57 +2,94 @@
 
 I am using JetBrains' DataSpell IDE for this project. It is essentially a nice JetBrains IDE experience wrapped around Jupyter notebooks. Normally JetBrains IDEs have built-in support for to-dos, but I cannot get it working for DataSpell. So I will use a separate markdown codeblock here to track outstanding items.
 
-### Notes from Published Paper
+### Column Notes
 
-- Researchers looked at yes/no decisions separate from matches
-- Four minute speed dates
-- Participants were students in graduate and professional schools at Columbia University (selection bias maybe)
-- Score card
-    - Yes/No (main variable of interest)
-        - Decision$_{ij}$ is the decision of subject *i* about person *j*
-    - Six attributes to rate the other person on
-        - Attractive
-        - Sincere
-        - Intelligent
-        - Fun
-        - Ambitious
-        - Shared interests
-- Women stayed seated and men rotated
-- Study primarily looks at differential gender effects
-    - Male$_i$ indicator variable
-- Study only looks at attractiveness, intelligence, and ambition. The omitted characteristics had similar weights.
-    - Rating$_ijc$ is subject *i's* rating on a ten-point scale about *j* on characteristic *c* $\in$ {Attractiveness, Intelligence, Ambition}
-    - Observations that have missing values for one of these three characteristics are omitted from the regression
-    - $\bar{Rating}_{-ijc}$ is the average rating for a characteristic from everyone who rated person *j* and the $-i$ means that *i* is excluded from this average
-- There are a few log measures for SAT at undergrad institution, median income in zip code, and population density in zip code
-- Self$_{ic}$ is subject *i's* rating for themselves on characteristic *c*
-    - Others$_{ic}$ is how others who rated *i* rated them on *c*
-- Each participant did a pre-event survey where the researchers gathered some of the non-event data about subjects
-- Pre-event survey is used to determine ahead of time a few measures SameABC$_{ij}$ to say if the two people had the same ABC attribute
-- Yeses%_i$ and other related measures relate to how many people *i* said yes to
-- Table 2a shows descriptive statistics. Maybe include a section in the project that does some summary descriptive statistics to orient ourselves to the data. Also look at table 2b
-- Page 685 starts to have some conditions and assumptions about men fearing rejection leading to lower desire for more intelligent or more ambitious women. Also asks why there is a difference in fear of rejection between genders. At least the paper is starting to question some of these things.
-- Some survey results are subjective (ratings) and others are objective (SAT, zip code, etc)
-    - Objective data is much more sparse if you try to include all three features
-- In pre-event survey, participants rated their interest in seventeen activities and has SharedInterests features to compare between participants
+Next is to narrow the feature space down to what we will use for modeling. Note that the only categorical variable that will need encoding is `goal`. I am treating the 1-10 ratings as discrete numeric variables instead of as ordinal categorical variables since the current numeric encoding captures the order that we want for them.
+
+Here are the features that we will keep:
+- gender (boolean): indicates if participant is male or female
+- int_corr (continuous & in range [-1, 1]): correlation between ratings of interests between date participants; this summarizes down participants' interest ratings for a group of 17 activities
+- age_o (continuous & in range [18,55]): partner's age
+- age (continuous & in range [18,55]): participant's age
+- goal (categorical): participant's primary goal in participating in event
+    1. Seemed like a fun night out
+    2. To meet new people
+    3. To get a date
+    4. Looking for a serious relationship
+    5. To say I did it
+    6. Other
+- exphappy (discrete & in range [1,10]): how happy participant expects to be with people they meet at event
+
+From here onwards, we encounter repetitions of the six attributes above. I will provide headers that explain what the repetitions are asking about instead of adding that as a description for each feature.
+
+Here are the abbreviations:
+
+- attr#_#: attractive
+- sinc#_#: sincere
+- intel#_#: intelligent
+- fun#_#: fun
+- amb#_#: ambitious
+- shar#_#: shared interests
+
+The data dictionary says that waves 6-9 rate some groups of these features on a 1-10 scale while the remaining waves distribute 100 points across all five or six features. Some feature groupings that the dictionary indicates should be [1,10] are already rescaled to [0,100] such that the total of all of the features in the grouping for each row sum to 100, so the standardization turned [1,10] ratings into relative ratings on a [1,100] percentage scale. For groupings that require further standardization, we will do the same by summing the total for the grouping for a row and standardize it if the amount does not sum to 100. The one case we may be missing out on here is if someone gives 10s for all of the attributes on a 1-10 scale, but those would get rescaled to 10s anyways.
+
+This means that the data type for each of these columns will end up being continuous & in range [0,100].
+
+Now, back to the columns.
+
+These six features are related to what the participant looks for in the opposite sex:
+- attr1_1
+- sinc1_1
+- intel1_1
+- fun1_1
+- amb1_1
+- shar1_1
+
+The next six features are what the participant thinks most of their fellow men/women look for in the opposite sex:
+- attr4_1
+- sinc4_1
+- intel4_1
+- fun4_1
+- amb4_1
+- shar4_1
+
+The next six features are what the participant thinks the opposite sex looks for in a date:
+- attr2_1
+- sinc2_1
+- intel2_1
+- fun2_1
+- amb2_1
+- shar2_1
+
+The next five features are how the participant rates themselves (discrete & in range [1,10]):
+- attr3_1
+- sinc3_1
+- intel3_1
+- fun3_1
+- amb3_1
+
+The next five features are how the participant thinks others would rate them (discrete & in range [1,10]):
+- attr5_1
+- sinc5_1
+- intel5_1
+- fun5_1
+- amb5_1
+
+Moving on to information collected at the dates:
+- dec (boolean): does the participant want to meet their date partner again
+
+Next is how the participant rates their date on the six attributes from above (discrete & in range [1,10]):
+- attr
+- sinc
+- intel
+- fun
+- amb
+- shar
+
+And two final features related to the specific date:
+- like (discrete & in range [1,10]): how much the participant likes their date overall
+- prob (discrete & in range [1,10]): how probable do you think it is that your partner will want to see you again
  
-### Project Cell
-
-- Clarify focus on match vs decision
-- Scope down and refine focus of analysis
-
-### Loading and Initial Exploration Cell
-
-- Determine the right scope for summary and initial EDA
-- Plan for how to tackle the large feature space, making sure to incorporate details from the paper about the different groups of categorical variables
-
-### Preprocessing Cell
-
-- Look at categorical features and decide what types of mappings need to happen (numerical to string categories).
-- Handle missing values
-- Handle outliers
-- Start figuring out when and how to substitute in factor levels for categorical variables (likely much later on after modeling since we'll want categorical variables as numbers for ML purposes)
-
 ### Model Identification Cell
 
 - Explain the different models to explore and how we expect performance differences as well as the differences in what the models can tell us

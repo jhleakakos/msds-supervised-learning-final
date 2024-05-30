@@ -89,7 +89,3 @@ Next is how the participant rates their date on the six attributes from above (d
 And two final features related to the specific date:
 - like (discrete & in range [1,10]): how much the participant likes their date overall
 - prob (discrete & in range [1,10]): how probable do you think it is that your partner will want to see you again
- 
-### Model Identification Cell
-
-- Explain the different models to explore and how we expect performance differences as well as the differences in what the models can tell us

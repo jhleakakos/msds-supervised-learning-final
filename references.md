@@ -1,7 +1,3 @@
-## To-Do list
-
-I am using JetBrains' DataSpell IDE for this project. It is essentially a nice JetBrains IDE experience wrapped around Jupyter notebooks. Normally JetBrains IDEs have built-in support for to-dos, but I cannot get it working for DataSpell. So I will use a separate markdown codeblock here to track outstanding items.
-
 ### Column Notes
 
 Next is to narrow the feature space down to what we will use for modeling. Note that the only categorical variable that will need encoding is `goal`. I am treating the 1-10 ratings as discrete numeric variables instead of as ordinal categorical variables since the current numeric encoding captures the order that we want for them.
@@ -89,3 +85,13 @@ Next is how the participant rates their date on the six attributes from above (d
 And two final features related to the specific date:
 - like (discrete & in range [1,10]): how much the participant likes their date overall
 - prob (discrete & in range [1,10]): how probable do you think it is that your partner will want to see you again
+
+## Performance Metrics
+
+Accuracy = (TP + TN) / (TP + TN + FP + FN)
+
+Precision = TP / (TP + FP)
+
+Recall = TP  /(TP + FN)
+
+F-score = 2 (precision * recall) / (precision + recall)
